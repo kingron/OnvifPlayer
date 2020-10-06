@@ -1,5 +1,5 @@
 # RtspPullClient
-A pure Java RTSP streaming pull client with hard decode of H264 library and demo, simple but powerful, callback support
+A pure Java RTSP streaming pull client & player with hard decode of H264 library and demo, simple but powerful, callback support. Onvif PTZ control support as well.
 
 # Usage
 
