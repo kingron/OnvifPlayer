@@ -1,6 +1,22 @@
 # RtspPullClient
 A pure Java RTSP streaming pull client & player with hard decode of H264 library and demo, simple but powerful, callback support. Onvif PTZ control support as well.
 
+安卓下RTSP取流及硬解码代码及播放，700行代码量搞定，包含示例代码。史上最简单、高性能RTSP流播放器了。特点：
+* Support Basic & Digest authorization: RTSP取流，支持Basic和Digest鉴权
+* UDP & RTSP Over TCP both: 支持UDP和RTSP Over TCP两种模式
+* RTSP Play Control: 支持回放控制速度及位置拖动调整
+* RTP packet callback & RTSP response callback: 支持RTSP命令响应回调和RTP包回调
+* For streaming forward: 尤其适合取流转发不做解码的情况
+* RTP Decode: RTP解码完整H264帧
+* RTP Encode: 支持把完整H264帧编码为多个RTP包，可以直接用UDP或者RTP Over TCP发送走
+* RTP extension support: RTP包支持扩展模式
+* 安卓硬件解码视频流
+* 代码超级简单易用，不包含任何非标准库，代码耦合度极低，纯Java实现，单文件类
+* 资源和CPU消耗极低
+* 完整Javadoc文档
+
+代码特别有意思，例如异步转同步，RTSP Over TCP嵌入取流处理后还能继续支持其他RTSP指令及响应。 网络I/O读取不足处理，一行正则表达式提取复杂多个数据等。
+
 # Usage
 
     public void Play(View view) {
