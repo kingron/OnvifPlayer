@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Onvif 播放器</string>
+    <string name="url"><![CDATA[rtsp://user:password@192.168.1.123:554/id=1&type=0&record=20201001002017_20201001010000]]></string>
+    <string name="use_rtsp_over_tcp">RTP Over TCP</string>
+    <string name="start">开始播放 / 停止播放媒体流</string>
+    <string name="pause_resume">暂停/继续，直播可能不支持</string>
+    <string name="slow">减速播放，对直播无效</string>
+    <string name="fast">加速播放，对直播无效</string>
+    <string name="tile_up">按住向上移动，松开停止</string>
+    <string name="pan_left">按住向左移动，松开停止</string>
+    <string name="zoom_in">按住画面放大，松开停止</string>
+    <string name="zoom_out">按住画面缩小，松开停止</string>
+    <string name="tile_down">按住向下移动，松开停止</string>
+    <string name="pan_right">按住向右移动，松开停止</string>
+    <string name="rtsp_player_uri">RTSP 播放地址，格式: rtsp://用户名:密码@服务器地址:端口/资源路径\n例如: rtsp://admin:123456@192.168.1.123:554/h264/ch1/main/av_stream</string>
+    <string name="help_default">先输入RTSP地址\n再点播放按钮</string>
+    <string name="set_preset">设置或修改预置位</string>
+    <string name="del_preset">删除预置位</string>
+    <string name="about">❤ Onvif 播放器 1.0\n© Kingron@163.com</string>
+    <string name="crash">糟糕！</string>
+    <string name="ptz_speed">云台转动速度:</string>
+    <string name="ptz_speed_range">[最慢 0, 最快 100]</string>
+    <string name="invalid_rtsp_url">无效URL格式</string>
+    <string name="play_failed">播放失败</string>
+    <string name="error_create_codec">无法创建硬件解码器，可以取流但无法看到视频画面</string>
+    <string name="play_speed">播放速度: %4.2f 倍速</string>
+    <string name="xml_error">XML解释错误:</string>
+    <string name="current_position">当前位置</string>
+    <string name="set_success">预置位 %s 设置成功</string>
+    <string name="del_preset_ok">预置位删除成功</string>
+    <string name="str_error">错误:</string>
+</resources>

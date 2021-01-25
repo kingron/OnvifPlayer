@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">Onvif Player</string>
+    <string name="url"><![CDATA[rtsp://user:password@192.168.1.123:554/id=1&type=0&record=20201001002017_20201001010000]]></string>
+    <string name="use_rtsp_over_tcp">RTP Over TCP</string>
+    <string name="start">Start / Stop streaming</string>
+    <string name="pause_resume">Pause/Resume, N/A for live media</string>
+    <string name="slow">Slow, N/A for live media</string>
+    <string name="fast">Fast, N/A for live media</string>
+    <string name="tile_up">Tap down to tile up\ntap up to stop</string>
+    <string name="pan_left">Tap down to pan left\ntap up to stop</string>
+    <string name="zoom_in">Tap down to zoom in\ntap up to stop</string>
+    <string name="zoom_out">Tap down to zoom out\ntap up to stop</string>
+    <string name="tile_down">Tap down to tile down\ntap up to stop</string>
+    <string name="pan_right">Tap down to pan right\ntap up to stop</string>
+    <string name="rtsp_player_uri">RTSP Url, format: rtsp://user:password@server:port/resource\ne.g: rtsp://admin:123456@192.168.1.123:554/h264/ch1/main/av_stream</string>
+    <string name="help_default">Input RTSP url and tap [play] button</string>
+    <string name="set_preset">Add or modify preset</string>
+    <string name="del_preset">Remove preset</string>
+    <string name="about">❤ Onvif Player 1.0\n© Kingron@163.com</string>
+    <string name="crash">Oops!</string>
+    <string name="ptz_speed">PTZ speed:</string>
+    <string name="ptz_speed_range">\n[Slow 0, Fast 100]</string>
+    <string name="invalid_rtsp_url">Invalid RTSP Url</string>
+    <string name="play_failed">Play failed</string>
+    <string name="error_create_codec">Can\'t create decoder, streaming pull might work but can\'t watch the video</string>
+    <string name="play_speed">Play speed: %4.2fX</string>
+    <string name="xml_error">XML parse error: </string>
+    <string name="current_position">Current position</string>
+    <string name="set_success">Preset %s set OK</string>
+    <string name="del_preset_ok">Preset delete OK</string>
+    <string name="str_error">Error: </string>
+</resources>

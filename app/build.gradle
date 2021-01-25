@@ -1,0 +1,81 @@
+apply plugin: 'com.android.application'
+
+def buildNumber = 0;
+def vb = new File("version.build")
+if (vb.exists())
+    buildNumber = vb.readLines()[0].toInteger() + 1
+println("当前编译版本号: " + buildNumber.toString())
+
+android {
+    signingConfigs {
+        releaseSigned {
+            storeFile file('../signkey.jks')
+            keyAlias 'key0'
+            keyPassword '123456'
+            storePassword '123456'
+        }
+    }
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "zhjinrui.com.onvifplayer"
+        minSdkVersion 21
+        targetSdkVersion 21
+        versionCode buildNumber
+        versionName "1.0." + buildNumber.toString()
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.releaseSigned
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.releaseSigned
+        }
+        debug {
+            signingConfig signingConfigs.releaseSigned
+        }
+    }
+
+    buildToolsVersion '28.0.3'
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                def apkName = "OnvifPlayer-${variant.buildType.name}-${buildNumber}.apk";
+                // gradle 3.1以下版本用下面代码
+                // output.outputFileName = new File(output.outputFile.parent, apkName)
+                output.outputFileName = new File("", apkName)
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support.constraint:constraint-layout:2.0.1'
+    implementation 'be.teletask.onvif:onvif:+'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
+
+gradle.taskGraph.afterTask {
+    Task task, TaskState state ->
+        if (!state.failure) {
+            if ("$task.name" == "assembleRelease") {
+                def fn = "" + rootProject.projectDir + "/app/build/outputs/apk/release/OnvifPlayer-release-${buildNumber}.apk"
+                File file = new File(fn)
+                if (file.exists()) {
+                    fn = fn.replace("/", "\\")
+                    exec { commandLine "cmd", "/c", "copy /y ${fn} ..\\OnvifPlayer.apk" }
+
+                    vb.write(buildNumber.toString());
+                }
+            }
+        }
+}

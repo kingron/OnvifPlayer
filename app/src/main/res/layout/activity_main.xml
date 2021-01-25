@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <SurfaceView
+        android:id="@+id/surfaceView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        android:clickable="true"
+        app:layout_constraintBottom_toTopOf="@+id/etURL"
+        app:layout_constraintEnd_toStartOf="@+id/btnLeft"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        android:focusable="true" />
+
+    <EditText
+        android:id="@+id/etURL"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/rtsp_player_uri"
+        android:ems="10"
+        android:inputType="textUri"
+        android:text="@string/url"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/sbSpeed"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <CheckBox
+        android:id="@+id/cbTcp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
+        android:checked="true"
+        android:text="@string/use_rtsp_over_tcp"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="@+id/sbSpeed"
+        app:layout_constraintTop_toBottomOf="@+id/spnPresets" />
+
+    <ImageButton
+        android:id="@+id/Play"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="#00000000"
+        android:contentDescription="@string/start"
+        android:onClick="Play"
+        android:padding="0dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/play"
+        app:layout_constraintEnd_toStartOf="@+id/btnRight"
+        app:layout_constraintTop_toBottomOf="@+id/btnUp" />
+
+    <ImageButton
+        android:id="@+id/Pause"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:alpha="100"
+        android:background="#00000000"
+        android:contentDescription="@string/pause_resume"
+        android:onClick="Pause"
+        android:padding="0dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/pause"
+        app:layout_constraintStart_toStartOf="@+id/btnDown"
+        app:layout_constraintTop_toBottomOf="@+id/btnDown" />
+
+    <ImageButton
+        android:id="@+id/Slow"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:alpha="100"
+        android:background="#00000000"
+        android:contentDescription="@string/slow"
+        android:onClick="Slow"
+        android:padding="0dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/rewind"
+        app:layout_constraintEnd_toStartOf="@+id/Pause"
+        app:layout_constraintTop_toBottomOf="@+id/btnDown" />
+
+    <ImageButton
+        android:id="@+id/Fast"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:alpha="100"
+        android:background="#00000000"
+        android:contentDescription="@string/fast"
+        android:onClick="Fast"
+        android:scaleType="fitCenter"
+        android:src="@drawable/fast"
+        app:layout_constraintStart_toEndOf="@+id/Pause"
+        app:layout_constraintTop_toBottomOf="@+id/btnDown" />
+
+    <ImageButton
+        android:id="@+id/btnUp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:alpha="100"
+        android:background="#00000000"
+        android:contentDescription="@string/tile_up"
+        android:padding="0dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/camera_move_up"
+        app:layout_constraintEnd_toStartOf="@+id/btnZoomin"
+        app:layout_constraintTop_toTopOf="@+id/btnZoomin" />
+
+    <ImageButton
+        android:id="@+id/btnLeft"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:alpha="100"
+        android:background="#00000000"
+        android:contentDescription="@string/pan_left"
+        android:padding="0dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/camera_move_left"
+        app:layout_constraintEnd_toStartOf="@+id/btnUp"
+        app:layout_constraintTop_toBottomOf="@+id/btnUp" />
+
+    <ImageButton
+        android:id="@+id/btnAddPreset"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:alpha="100"
+        android:background="#00000000"
+        android:contentDescription="@string/set_preset"
+        android:onClick="setPreset"
+        android:padding="0dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/add_preset"
+        app:layout_constraintEnd_toStartOf="@+id/btnDown"
+        app:layout_constraintTop_toBottomOf="@+id/btnLeft" />
+
+    <ImageButton
+        android:id="@+id/btnZoomin"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:background="#00000000"
+        android:contentDescription="@string/zoom_in"
+        android:padding="0dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/zoomin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/btnZoomout"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:alpha="100"
+        android:background="#00000000"
+        android:contentDescription="@string/zoom_out"
+        android:padding="0dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/zoomout"
+        app:layout_constraintBottom_toTopOf="@+id/btnLeft"
+        app:layout_constraintEnd_toStartOf="@+id/btnUp" />
+
+    <ImageButton
+        android:id="@+id/btnDown"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:alpha="100"
+        android:background="#00000000"
+        android:contentDescription="@string/tile_down"
+        android:padding="0dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/camera_move_down"
+        app:layout_constraintEnd_toStartOf="@+id/btnRight"
+        app:layout_constraintTop_toBottomOf="@+id/btnRight" />
+
+    <ImageButton
+        android:id="@+id/btnDelPreset"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:alpha="100"
+        android:background="#00000000"
+        android:contentDescription="@string/del_preset"
+        android:onClick="unsetPreset"
+        android:padding="0dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/del_preset"
+        app:layout_constraintStart_toEndOf="@+id/btnDown"
+        app:layout_constraintTop_toBottomOf="@+id/btnRight" />
+
+    <ImageButton
+        android:id="@+id/btnRight"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:alpha="100"
+        android:background="#00000000"
+        android:contentDescription="@string/pan_right"
+        android:padding="0dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/camera_move_right"
+        app:layout_constraintEnd_toEndOf="@+id/btnZoomin"
+        app:layout_constraintTop_toBottomOf="@+id/btnZoomin" />
+
+    <SeekBar
+        android:id="@+id/sbSpeed"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:max="100"
+        android:padding="0dp"
+        android:progress="50"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/surfaceView"
+        app:layout_constraintTop_toBottomOf="@+id/Pause" />
+
+    <TextView
+        android:id="@+id/tvAbout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:autoLink="email"
+        android:text="@string/about"
+        android:textAlignment="center"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/sbSpeed" />
+
+    <Spinner
+        android:id="@+id/spnPresets"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/surfaceView"
+        app:layout_constraintTop_toBottomOf="@+id/sbSpeed" />
+
+    <TextView
+        android:id="@+id/tvHelp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:text="@string/help_default"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/surfaceView"
+        app:layout_constraintTop_toBottomOf="@+id/cbTcp" />
+
+    <ImageView
+        android:id="@+id/ivDonate"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="32dp"
+        android:layout_marginEnd="64dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="32dp"
+        android:adjustViewBounds="true"
+        android:cropToPadding="true"
+        android:src="@drawable/donate"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/sbSpeed"
+        app:layout_constraintStart_toStartOf="@+id/surfaceView"
+        app:layout_constraintTop_toTopOf="@+id/surfaceView" />
+
+</android.support.constraint.ConstraintLayout>
