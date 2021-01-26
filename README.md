@@ -1,7 +1,7 @@
 # RtspPullClient
 A pure Java RTSP streaming pull client & player with hard decode of H264 library and demo, simple but powerful, callback support. Onvif PTZ control support as well.
 
- ![image](https://github.com/kingron/OnvifPlayer/raw/master/Images/screen1.png)
+ ![image](https://github.com/kingron/OnvifPlayer/raw/main/Images/screen1.png)
 
 安卓下RTSP取流及硬解码代码及播放，700行代码量搞定，包含示例代码。史上最简单、高性能RTSP流播放器了。特点：
 * Support Basic & Digest authorization: RTSP取流，支持Basic和Digest鉴权
