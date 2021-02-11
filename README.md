@@ -33,20 +33,13 @@ A pure Java RTSP streaming pull client & player with hard decode of H264 library
             showMessage("无法创建硬件解码器，可以取流但无法看到视频画面");
         }
 
-        final boolean skip = cbSkip.isChecked();
         try {
             rtspClient = new RtspClient(url.getText().toString(), new RtspClientCallback() {
                 @Override
                 public void onPacket(int channel, byte[] packet, int len) {
                     if (codec == null) return;
 
-                    byte[] frame;
-                    if (skip) {
-                        byte[] data = new byte[len -4];
-                        System.arraycopy(packet, 4, data, 0, len - 4);
-                        frame = rtph264.decode(data, len - 4);
-                    } else
-                        frame = rtph264.decode(packet, len);
+                    byte[] frame = rtph264.decode(packet, len);
                     if (frame == null) return;
 
                     int inputBufferIndex = codec.dequeueInputBuffer(0);
