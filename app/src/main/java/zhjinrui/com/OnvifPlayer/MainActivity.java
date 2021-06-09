@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.media.MediaCodec;
+import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
+import android.media.MediaMuxer;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
@@ -66,7 +68,6 @@ public class MainActivity extends Activity implements OnvifResponseListener, Thr
     ImageView ivDonate;
     SeekBar sbSpeed;
     RTPH264 rtph264;
-    MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
     float speed = 1.0f;
     boolean pause = false;
     SharedPreferences preferences;
@@ -76,7 +77,6 @@ public class MainActivity extends Activity implements OnvifResponseListener, Thr
     boolean fill = true;
     private String profileToken = "Profile_1";
     // 初始大小随意，码流中有SPS和PPS，解码器会自动调整大小
-    MediaFormat mediaFormat = MediaFormat.createVideoFormat("video/avc", 320, 240);
 
     private AdapterView.OnItemSelectedListener onItemSelectedListener = new AdapterView.OnItemSelectedListener() {
         @Override
@@ -94,14 +94,99 @@ public class MainActivity extends Activity implements OnvifResponseListener, Thr
     };
 
     private RtspClientCallback rtspClientCallback = new RtspClientCallback() {
+
+        private byte[] trimFrame(byte[] save) {
+            int index = 0;
+            int len = 0;
+            byte[] buffer = new byte[save.length];
+            while (index < save.length - 2) {
+                if (save[index] == 0 && save[index + 1] == 0 && (save[index + 2] == 1 || save[index + 2] == 3))
+                    index += 3;
+                else
+                    buffer[len++] = save[index++];
+            }
+            while (index < save.length)  // 补齐尾部数据
+                buffer[len++] = save[index++];
+
+            byte[] ret = new byte[len];
+            System.arraycopy(buffer, 0, ret, 0, len);
+            return ret;
+        }
+
+        private void initMuxer() {
+            try {
+                muxer = new MediaMuxer("/sdcard/zhjinrui/demo.mp4", MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+            } catch (IOException e) {
+                muxer = null;
+                return;
+            }
+            mediaFormat = MediaFormat.createVideoFormat("video/avc", 1920, 1080);
+            mediaFormat.setByteBuffer("csd-0", ByteBuffer.wrap(pps));
+            mediaFormat.setByteBuffer("csd-1", ByteBuffer.wrap(sps));
+            mediaFormat.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, 1920 * 1080);
+            mediaFormat.setInteger(MediaFormat.KEY_CAPTURE_RATE, 25);
+            mediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
+            trackVideo = muxer.addTrack(mediaFormat);
+
+            muxer.start();
+
+            MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
+            bufferInfo.offset = 0;
+            bufferInfo.flags = MediaCodec.BUFFER_FLAG_CODEC_CONFIG;
+            bufferInfo.presentationTimeUs = System.nanoTime() / 1000;
+
+            bufferInfo.size = sps_frame.length;
+            muxer.writeSampleData(trackVideo, ByteBuffer.wrap(sps_frame), bufferInfo);
+
+            bufferInfo.size = pps_frame.length;
+            muxer.writeSampleData(trackVideo, ByteBuffer.wrap(pps_frame), bufferInfo);
+
+            videoReady = true;
+        }
+
         @Override
         public void onPacket(int channel, byte[] packet, int len) {
             if (codec == null) return;
 
-            byte[] frame;
-            frame = rtph264.decode(packet, len);
+            byte[] frame = rtph264.decode(packet, len);
             if (frame == null) return;
 
+            int flag = rtph264.getType(packet);
+//            Log.e(TAG, "时间序列: " + rtph264.timestamp + " 帧类型: " + flag + " 帧长度: " + frame.length);
+
+            // 海康Flag顺序： 7，8，6
+            if (flag == 8) {  // pps
+                pps = trimFrame(frame);
+                formatSetted = true;
+                pps_frame = frame;
+            } else if (flag == 7) {
+                sps = trimFrame(frame);
+                sps_frame = frame;
+            }
+
+            if (formatSetted && !videoReady) {
+                if (muxer == null) initMuxer();
+            }
+
+            if (videoReady) {
+                try {
+                    MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
+                    bufferInfo.offset = 0;
+                    bufferInfo.size = frame.length;
+                    if (flag == 8 || flag == 6 || flag == 7) {
+                        bufferInfo.flags = MediaCodec.BUFFER_FLAG_CODEC_CONFIG;
+                    } else if (flag == 28 || flag == 1) {
+                        bufferInfo.flags = MediaCodec.BUFFER_FLAG_KEY_FRAME;
+                    }
+
+                    bufferInfo.presentationTimeUs = System.nanoTime() / 1000;
+                    muxer.writeSampleData(trackVideo, ByteBuffer.wrap(frame), bufferInfo);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            // 开始解码显示在界面
             int inputBufferIndex = codec.dequeueInputBuffer(0);
             if (inputBufferIndex >= 0) {
                 ByteBuffer buffer = codec.getInputBuffer(inputBufferIndex);
@@ -125,6 +210,14 @@ public class MainActivity extends Activity implements OnvifResponseListener, Thr
 
         }
     };
+
+    private MediaFormat mediaFormat = MediaFormat.createVideoFormat("video/avc", 1920, 1080);
+    private MediaMuxer muxer;
+    private MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
+    private int trackVideo = 0;
+    private boolean formatSetted = false;
+    private boolean videoReady = false;
+    private byte[] pps, pps_frame, sps, sps_frame;
 
     @Override
     public void uncaughtException(Thread thread, Throwable throwable) {
@@ -372,6 +465,7 @@ public class MainActivity extends Activity implements OnvifResponseListener, Thr
             showMessage(getString(R.string.invalid_rtsp_url));
             return;
         }
+
         preferences.edit().putString(S_URL, etUrl.getText().toString()).commit();
         preferences.edit().putBoolean(S_RTSP_OVER_TCP, cbTCP.isChecked()).commit();
         rtspClient.udpMode = !cbTCP.isChecked();
@@ -390,7 +484,9 @@ public class MainActivity extends Activity implements OnvifResponseListener, Thr
     private void initCodec() {
         try {
             codec = MediaCodec.createDecoderByType("video/avc");
-            mediaFormat = MediaFormat.createVideoFormat("video/avc", 640, 480);
+            mediaFormat = MediaFormat.createVideoFormat("video/avc", 1920, 1080);
+            mediaFormat.setByteBuffer("csd-0", ByteBuffer.wrap(new byte[]{0, 0, 0, 1, 103, 100, 0, 31, -84, -76, 2, -128, 45, -56}));  // SPS
+            mediaFormat.setByteBuffer("csd-1", ByteBuffer.wrap(new byte[]{0, 0, 0, 1, 104, -18, 60, 97, 15, -1, -16, -121, -1, -8, 67, -1, -4, 33, -1, -2, 16, -1, -1, 8, 127, -1, -64})); // PPS
             mediaFormat.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, 0);
             codec.configure(mediaFormat, svPreview.getHolder().getSurface(), null, 0);
             codec.start();
@@ -440,8 +536,16 @@ public class MainActivity extends Activity implements OnvifResponseListener, Thr
                 codec.stop();
             } catch (Exception e) {
             }
+
+            if (muxer != null) {
+                muxer.stop();
+                muxer.release();
+                muxer = null;
+            }
             rtspClient = null;
             codec = null;
+            videoReady = false;
+            formatSetted = false;
             updateUI(false);
         }).start();
     }

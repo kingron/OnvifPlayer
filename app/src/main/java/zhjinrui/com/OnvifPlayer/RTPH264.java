@@ -34,18 +34,24 @@ public class RTPH264 {
     /**
      * RTP包的时间序列，若解码，则为RTP包中的提取的时间序列；若编码，则自动按30fps递增，外部可以根据需要调整该值
      */
-    public int timestamp;
+    public long timestamp;
     /**
      * RTP帧号，若解码，则为解码出来的RTP帧号，若编码，则自动递增
      */
     public int seqnum = 0;
+
+    /**
+     * HAL 帧类型， 0 ~ 32 之间
+     * 5 = IDR, 6 = SEI, 7 = SPS, 8 = PPS etc....
+     */
+    public int type = 0;
 
     //mtu = 1500 - 14(ethernet) - 20(ip) - 8(udp) - 12(rtp) = 1446 bytes payload per packet
     private static final int mtu = 1440;
     private final int ssrc;
     private byte partial[] = new byte[0];
     private int lastseqnum = -1;
-    private int last_timestamp = -1;
+    private long last_timestamp = -1;
 
     public RTPH264(int mssrc) {
         ssrc = mssrc;
@@ -54,7 +60,7 @@ public class RTPH264 {
     /**
      * Builds RTP header in first 12 bytes of data[].
      */
-    private static void buildHeader(byte data[], int id, int seqnum, int timestamp, int ssrc, boolean last) {
+    private static void buildHeader(byte data[], int id, int seqnum, long timestamp, int ssrc, boolean last) {
         //build RTP header
         data[0] = (byte) 0x80;  //version
         data[1] = (byte) id;    //0=g711u 3=gsm 8=g711a 18=g729a 26=JPEG 34=H.263 etc.
@@ -62,7 +68,7 @@ public class RTPH264 {
             data[1] |= 0x80;
         }
         BE.setuint16(data, 2, seqnum);
-        BE.setuint32(data, 4, timestamp);
+        BE.setuint32(data, 4, (int) timestamp);
         BE.setuint32(data, 8, ssrc);
     }
 
@@ -209,11 +215,11 @@ public class RTPH264 {
         int h264Length = length - fu_header_len;
         if (h264Length == 0) return null; // 空包，原样返回一个空包！
 
-        int type = rtp[fu_header_len] & 0x1f;
+        type = rtp[fu_header_len] & 0x1f;
+        timestamp = gettimestamp(rtp, 0) & 0xFFFFFFFFL;
         if (partial == null) partial = new byte[0];
         byte[] ret = null;
         if (type == 28) {
-            timestamp = gettimestamp(rtp, 0);
             if (last_timestamp == -1) last_timestamp = timestamp;
 
             if (timestamp != last_timestamp && partial.length > 0) {
